@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>Entre Linhas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#27500A;--green-mid:#3B6D11;--green-light:#EAF3DE;--green-border:#639922;
+  --amber:#854F0B;--amber-mid:#BA7517;--amber-light:#FAEEDA;--amber-border:#EF9F27;
+  --red:#791F1F;--red-mid:#A32D2D;--red-light:#FCEBEB;--red-border:#E24B4A;
+  --teal:#085041;--teal-mid:#0F6E56;--teal-light:#E1F5EE;--teal-border:#1D9E75;
+  --bg:#fafaf8;--surface:#fff;--surface2:#f4f3ef;
+  --text:#1a1a18;--text2:#5a5a56;--text3:#9a9a94;
+  --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.18);
+  --radius:10px;--radius-sm:6px;--radius-lg:14px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1a18;--surface:#242420;--surface2:#2e2e2a;
+    --text:#f0efe8;--text2:#9a9a94;--text3:#5a5a56;
+    --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.16);
+    --green-light:#173404;--green-border:#3B6D11;--green:#C0DD97;
+    --teal-light:#04342C;--teal-border:#0F6E56;--teal:#9FE1CB;
+    --amber-light:#412402;--amber-border:#854F0B;--amber:#FAC775;
+    --red-light:#501313;--red-border:#791F1F;--red:#F7C1C1;
+  }
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif}
+#app{max-width:520px;margin:0 auto;padding:0 14px 40px;display:flex;flex-direction:column}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 14px;border-bottom:1px solid var(--border);margin-bottom:14px}
+.logo{font-weight:800;font-size:21px;letter-spacing:-0.5px;color:var(--text)}
+.logo em{font-style:normal;color:var(--teal-mid)}
+@media(prefers-color-scheme:dark){.logo em{color:var(--teal)}}
+.header-meta{display:flex;align-items:center;gap:10px}
+.badge{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--text2)}
+.pts-badge{font-size:11px;color:var(--text2);font-family:'Space Mono',monospace}
+.pts-badge b{color:var(--text);font-weight:700}
+
+.mode-selector{display:flex;gap:4px;margin-bottom:12px}
+.mode-btn{flex:1;padding:10px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface2);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:var(--text2);transition:all .2s}
+.mode-btn.active{background:var(--teal-mid);color:#fff;border-color:var(--teal-border)}
+.mode-btn:hover{border-color:var(--border)}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+.stat-card{background:var(--surface2);border-radius:var(--radius-sm);padding:8px 6px;text-align:center}
+.stat-n{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:var(--text)}
+.stat-l{font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-top:1px}
+
+.status-banner{padding:10px 12px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);font-size:12px;color:var(--text2);text-align:center;margin-bottom:10px;display:none}
+.status-banner.show{display:block}
+
+.range-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px}
+.word-slot{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2)}
+.word-slot.upper{margin-bottom:7px}
+.word-slot.lower{margin-top:7px}
+.slot-arrow{font-size:18px;color:var(--text3);min-width:18px;text-align:center}
+.slot-word{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;flex:1;color:var(--text)}
+.slot-pct{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:var(--radius-sm);background:var(--amber-light);color:var(--amber-mid);white-space:nowrap;text-align:right;min-width:45px}
+@media(prefers-color-scheme:dark){.slot-pct{color:var(--amber)}}
+
+.bar-wrap{display:flex;align-items:center;gap:10px;margin:2px 10px}
+.bar-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;border:1px solid var(--border);position:relative}
+.bar-fill{position:absolute;top:0;bottom:0;background:var(--teal-border);border-radius:3px;transition:all .4s ease}
+.bar-pct{font-family:'Space Mono',monospace;font-size:10px;color:var(--text2);min-width:34px;text-align:right}
+
+.result-box{border-radius:var(--radius-lg);border:1px solid;padding:18px;text-align:center;margin-bottom:12px;display:none}
+.result-box.win{background:var(--teal-light);border-color:var(--teal-border);display:block}
+.result-box.lose{background:var(--red-light);border-color:var(--red-border);display:block}
+.result-title{font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px}
+.result-secret{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:8px 0}
+.result-secret.win{color:var(--teal-mid)}
+.result-secret.lose{color:var(--red-mid)}
+@media(prefers-color-scheme:dark){.result-secret.win{color:var(--teal)}.result-secret.lose{color:var(--red)}}
+.result-sub{font-size:13px;color:var(--text2)}
+.new-btn{margin-top:12px;padding:9px 22px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer;color:var(--text);transition:background .2s}
+.new-btn:hover{background:var(--surface2)}
+
+.input-row{display:flex;gap:8px;margin-bottom:5px}
+.word-input{flex:1;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:11px 13px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+.word-input:focus{border-color:var(--teal-border);box-shadow:0 0 0 2px rgba(29,158,117,.14)}
+.word-input.shake{animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.submit-btn{padding:11px 18px;background:var(--teal-mid);color:#fff;border:none;border-radius:var(--radius);font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.submit-btn:hover{opacity:.85}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.error-line{font-size:12px;color:var(--red-mid);min-height:16px;margin-bottom:6px;font-weight:600}
+@media(prefers-color-scheme:dark){.error-line{color:var(--red)}}
+.validating-hint{font-size:11px;color:var(--text3);text-align:center;min-height:14px;margin-bottom:4px}
+
+.alphabet-row{display:flex;justify-content:center;gap:4px;margin-bottom:8px;flex-wrap:wrap;padding:8px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)}
+.alpha-letter{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;cursor:default}
+
+.keyboard{display:flex;flex-direction:column;gap:5px;user-select:none;margin-top:4px}
+.kb-row{display:flex;justify-content:center;gap:4px}
+.kb-key{
+  height:44px;min-width:28px;flex:1;max-width:38px;
+  border-radius:var(--radius-sm);border:1px solid var(--border2);
+  background:var(--surface2);color:var(--text);
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .12s,opacity .12s,border-color .12s;
+  text-transform:uppercase;
+}
+.kb-key:active{transform:scale(.93)}
+.kb-key.wide{max-width:52px;font-size:11px;min-width:38px}
+.kb-key.available{background:var(--surface);border-color:var(--border2);color:var(--text)}
+.kb-key.unavailable{background:transparent;border-color:var(--border);color:var(--text3);opacity:.28;pointer-events:none}
+.kb-key.special{background:var(--surface);border-color:var(--border2);color:var(--text);max-width:52px;min-width:38px}
+
+.help-toggle{font-size:11px;color:var(--text2);text-align:center;cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:12px 0 0}
+.help-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;font-size:12px;color:var(--text2);line-height:1.75;margin-top:8px;display:none}
+.help-box.open{display:block}
+.help-box strong{color:var(--text);font-weight:700}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">ENTRE <em>LINHAS</em></div>
+    <div class="header-meta">
+      <span class="badge" id="attempt-badge">1 / 12</span>
+      <span class="pts-badge">Pts: <b id="pts">5</b></span>
+    </div>
+  </header>
+
+  <div class="mode-selector">
+    <button class="mode-btn active" id="daily-btn" onclick="switchMode('daily')">Diário</button>
+    <button class="mode-btn" id="free-btn" onclick="switchMode('free')">Livre</button>
+  </div>
+
+  <div class="status-banner" id="status-banner"></div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-n" id="s-played">0</div><div class="stat-l">Jogados</div></div>
+    <div class="stat-card"><div class="stat-n" id="s-wins">0</div><div class="stat-l">Vitórias</div></div>
+    <div class="stat-card"><div class="stat-n" id="s-streak">0</div><div class="stat-l">Seguidas</div></div>
+    <div class="stat-card"><div class="stat-n" id="s-best">0</div><div class="stat-l">Recorde</div></div>
+  </div>
+
+  <div class="range-panel">
+    <div class="word-slot upper">
+      <span class="slot-arrow">↑</span>
+      <span class="slot-word" id="upper-word">AAAAA</span>
+      <span class="slot-pct" id="upper-pct" style="display:none"></span>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-track">
+        <div class="bar-fill" id="bar-fill" style="left:0%;width:100%"></div>
+      </div>
+      <span class="bar-pct" id="bar-pct">100</span>
+    </div>
+    <div class="word-slot lower">
+      <span class="slot-arrow">↓</span>
+      <span class="slot-word" id="lower-word">ZZZZZ</span>
+      <span class="slot-pct" id="lower-pct" style="display:none"></span>
+    </div>
+  </div>
+
+  <div class="result-box" id="result-box">
+    <div class="result-title" id="result-title"></div>
+    <div class="result-secret" id="result-secret"></div>
+    <div class="result-sub" id="result-sub"></div>
+    <button class="new-btn" onclick="newGame()">Novo Jogo</button>
+  </div>
+
+  <div class="input-row">
+    <input type="text" id="word-input" class="word-input" placeholder="5 letras" maxlength="5"
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+    <button class="submit-btn" id="submit-btn" onclick="submitGuess()">Tentar</button>
+  </div>
+  <div class="error-line" id="error-line"></div>
+  <div class="validating-hint" id="validating-hint"></div>
+
+  <div class="alphabet-row" id="alphabet-row"></div>
+  <div class="keyboard" id="keyboard"></div>
+
+  <div class="help-toggle" onclick="toggleHelp()">Como jogar?</div>
+  <div class="help-box" id="help-box">
+    <strong>Objetivo:</strong> Descobre a palavra secreta de 5 letras escondida entre duas palavras ordenadas alfabeticamente.<br><br>
+    <strong>Modos:</strong><br>
+    • <strong>Diário:</strong> Uma palavra por dia. Todos têm a mesma palavra. Podes jogar apenas uma vez por dia.<br>
+    • <strong>Livre:</strong> Gera palavras aleatórias. Joga quantas vezes quiseres.<br><br>
+    <strong>Intervalo:</strong> A barra mostra o espaço restante. As percentagens indicam a distância até à palavra secreta.<br><br>
+    <strong>Teclado inteligente:</strong> A linha de letras mostra apenas as letras possíveis para cada posição.<br><br>
+    <strong>Validação:</strong> Tens <strong>12 tentativas</strong>. As palavras são validadas por IA.
+  </div>
+</div>
+
+<script>
+const MAX_ATT=12;
+let gameMode='daily'; // 'daily' or 'free'
+let secret='', upperBound='aaaaa', lowerBound='zzzzz', attempts=0, gameOver=false;
+let stats={daily:{played:0,wins:0,streak:0,best:0},free:{played:0,wins:0,streak:0,best:0}};
+let wordCache=new Map(); // Cache de palavras validadas
+
+/* ─── UTILS ─────────────────────────────────── */
+function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();}
+function strCmp(a,b){return a<b?-1:a>b?1:0;}
+
+function formatDist(d){
+  if(d<0.01) return d.toFixed(2);
+  if(d<10) return d.toFixed(1);
+  return Math.round(d).toString();
+}
+
+/* ─── STORAGE ─────────────────────────────────── */
+function loadStats(){
+  const stored=localStorage.getItem('entrelinhas_stats');
+  if(stored){
+    try{stats=JSON.parse(stored);}
+    catch(e){console.error('Stats load error');}
+  }
+}
+
+function saveStats(){
+  localStorage.setItem('entrelinhas_stats',JSON.stringify(stats));
+}
+
+function getTodayKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function getDailySecret(){
+  const key='daily_secret_'+getTodayKey();
+  let word=sessionStorage.getItem(key);
+  if(!word){
+    word=pickSecretRandom();
+    sessionStorage.setItem(key,word);
+  }
+  return word;
+}
+
+function hasDailyPlayed(){
+  const key='daily_played_'+getTodayKey();
+  return sessionStorage.getItem(key)===1+'';
+}
+
+function markDailyPlayed(){
+  const key='daily_played_'+getTodayKey();
+  sessionStorage.setItem(key,'1');
+}
+
+/* ─── SMART KEYBOARD ────────────────────────── */
+function getValidLetters(typed){
+  const pos=typed.length;
+  if(pos>=5) return new Set();
+  const valid=new Set();
+  for(let c=97;c<=122;c++){
+    const letter=String.fromCharCode(c);
+    const prefix=typed+letter;
+    const lo=prefix+'aaaaa'.slice(prefix.length);
+    const hi=prefix+'zzzzz'.slice(prefix.length);
+    if(strCmp(lo,lowerBound)<0 && strCmp(hi,upperBound)>0){
+      valid.add(letter);
+    }
+  }
+  return valid;
+}
+
+function buildAlphabet(){
+  const typed=norm(document.getElementById('word-input').value||'');
+  const valid=getValidLetters(typed);
+  const row=document.getElementById('alphabet-row');
+  row.innerHTML='';
+  for(let c=97;c<=122;c++){
+    const letter=String.fromCharCode(c);
+    const span=document.createElement('span');
+    span.className='alpha-letter';
+    span.textContent=letter;
+    span.style.opacity=valid.has(letter)?'1':'0.3';
+    row.appendChild(span);
+  }
+}
+
+const ROWS=[['q','w','e','r','t','y','u','i','o','p'],
+            ['a','s','d','f','g','h','j','k','l'],
+            ['⌫','z','x','c','v','b','n','m','↵']];
+
+function buildKeyboard(){
+  const typed=norm(document.getElementById('word-input').value||'');
+  const valid=getValidLetters(typed);
+  const kb=document.getElementById('keyboard');
+  kb.innerHTML='';
+  ROWS.forEach(row=>{
+    const r=document.createElement('div');r.className='kb-row';
+    row.forEach(k=>{
+      const btn=document.createElement('button');
+      const isSpecial=k==='⌫'||k==='↵';
+      if(isSpecial){
+        btn.className='kb-key special';
+      } else {
+        btn.className='kb-key '+(valid.has(k)?'available':'unavailable');
+      }
+      btn.textContent=k;
+      btn.onclick=()=>handleKey(k);
+      r.appendChild(btn);
+    });
+    kb.appendChild(r);
+  });
+}
+
+function handleKey(k){
+  if(gameOver)return;
+  const inp=document.getElementById('word-input');
+  if(k==='⌫'){inp.value=inp.value.slice(0,-1);buildKeyboard();buildAlphabet();return;}
+  if(k==='↵'){submitGuess();return;}
+  const typed=norm(inp.value);
+  const valid=getValidLetters(typed);
+  if(inp.value.length<5 && valid.has(k)){
+    inp.value+=k;
+    buildKeyboard();
+    buildAlphabet();
+  }
+}
+
+/* ─── DISTANCE ─────────────────────────────────── */
+function pickSecretRandom(){
+  // Gera uma palavra aleatória válida
+  // Como não temos lista pré-carregada, vamos usar a API para gerar
+  // Por enquanto, retorna uma palavra "aleatória" de um conjunto base
+  const baseWords=['resto','rezar','pedra','comer','jugar','risco','verde','entre','lugar','porta'];
+  return baseWords[Math.floor(Math.random()*baseWords.length)];
+}
+
+function getIdx(w){
+  // Aproximação: usa apenas a primeira letra + posição relativa estimada
+  return w.charCodeAt(0)-97+Math.random()*26;
+}
+
+function distPct(guessWord){
+  const si=getIdx(secret);
+  const gi=getIdx(guessWord);
+  const d=Math.abs(si-gi);
+  const pct=(d/52)*100; // 26 letras * 2
+  return pct;
+}
+
+function calcBar(){
+  document.getElementById('bar-pct').textContent='100';
+}
+
+function updateSlotPcts(){
+  const upEl=document.getElementById('upper-pct');
+  const loEl=document.getElementById('lower-pct');
+  if(upperBound==='aaaaa'&&lowerBound==='zzzzz'){
+    upEl.style.display='none';loEl.style.display='none';return;
+  }
+  if(upperBound!=='aaaaa'){
+    const p=distPct(upperBound);
+    upEl.textContent=formatDist(p);upEl.style.display='';
+  } else {upEl.style.display='none';}
+  if(lowerBound!=='zzzzz'){
+    const p=distPct(lowerBound);
+    loEl.textContent=formatDist(p);loEl.style.display='';
+  } else {loEl.style.display='none';}
+}
+
+/* ─── SWITCH MODE ─────────────────────────────── */
+function switchMode(mode){
+  if(gameMode===mode)return;
+  gameMode=mode;
+  document.getElementById('daily-btn').classList.toggle('active',mode==='daily');
+  document.getElementById('free-btn').classList.toggle('active',mode==='free');
+  updateStats();
+  initGame();
+}
+
+/* ─── INIT GAME ──────────────────────────────── */
+function initGame(){
+  attempts=0;gameOver=false;
+  upperBound='aaaaa';lowerBound='zzzzz';
+  
+  // Check daily limit
+  if(gameMode==='daily'){
+    if(hasDailyPlayed()){
+      showStatus('Já jogaste hoje! Volta amanhã para uma nova palavra.','info');
+      document.getElementById('word-input').disabled=true;
+      document.getElementById('submit-btn').disabled=true;
+      document.getElementById('result-box').classList.add('lose');
+      document.getElementById('result-box').style.display='block';
+      document.getElementById('result-title').textContent='Já jogaste hoje';
+      document.getElementById('result-secret').textContent=getDailySecret().toUpperCase();
+      document.getElementById('result-secret').className='result-secret lose';
+      document.getElementById('result-sub').textContent='Volta amanhã para uma nova palavra.';
+      document.getElementById('result-box').querySelector('.new-btn').style.display='none';
+      return;
+    }
+    secret=getDailySecret();
+  } else {
+    secret=pickSecretRandom();
+  }
+
+  document.getElementById('upper-word').textContent='AAAAA';
+  document.getElementById('lower-word').textContent='ZZZZZ';
+  document.getElementById('upper-pct').style.display='none';
+  document.getElementById('lower-pct').style.display='none';
+  document.getElementById('bar-fill').style.left='0%';
+  document.getElementById('bar-fill').style.width='100%';
+  document.getElementById('bar-pct').textContent='100';
+  document.getElementById('attempt-badge').textContent='1 / '+MAX_ATT;
+  document.getElementById('pts').textContent='5';
+  document.getElementById('result-box').className='result-box';
+  document.getElementById('result-box').querySelector('.new-btn').style.display='';
+  document.getElementById('word-input').value='';
+  document.getElementById('word-input').disabled=false;
+  document.getElementById('submit-btn').disabled=false;
+  document.getElementById('error-line').textContent='';
+  document.getElementById('validating-hint').textContent='';
+  document.getElementById('status-banner').classList.remove('show');
+  buildKeyboard();
+  buildAlphabet();
+  updateStats();
+  document.getElementById('word-input').focus();
+}
+
+function updateStats(){
+  const s=stats[gameMode];
+  document.getElementById('s-played').textContent=s.played;
+  document.getElementById('s-wins').textContent=s.wins;
+  document.getElementById('s-streak').textContent=s.streak;
+  document.getElementById('s-best').textContent=s.best;
+}
+
+/* ─── VALIDATE via API ───────────────────────── */
+async function validateWord(word){
+  if(wordCache.has(word)) return wordCache.get(word);
+  
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"claude-sonnet-4-20250514",
+        max_tokens:60,
+        system:`You are a Portuguese dictionary validator. When given a 5-letter sequence, respond ONLY with JSON: {"valid":true} if it is a real Portuguese word, or {"valid":false} if not. No explanation.`,
+        messages:[{role:"user",content:word}]
+      })
+    });
+    const data=await res.json();
+    if(!data.content||!data.content[0]) return false;
+    const txt=data.content.map(b=>b.text||"").join("").trim().replace(/```json|```/g,"");
+    const result=JSON.parse(txt).valid===true;
+    wordCache.set(word,result);
+    return result;
+  }catch(e){
+    console.error('Validation error:',e);
+    return false;
+  }
+}
+
+/* ─── SUBMIT ─────────────────────────────────── */
+async function submitGuess(){
+  if(gameOver)return;
+  const inp=document.getElementById('word-input');
+  const guess=norm(inp.value);
+
+  if(guess.length!==5){setError('Escreve exatamente 5 letras.');shake();return;}
+  if(!/^[a-z]+$/.test(guess)){setError('Usa apenas letras.');shake();return;}
+
+  if(strCmp(guess,upperBound)<=0){
+    setError('Palavra anterior ou igual ao limite superior!');shake();return;
+  }
+  if(strCmp(guess,lowerBound)>=0){
+    setError('Palavra posterior ou igual ao limite inferior!');shake();return;
+  }
+
+  setLoading(true);
+  document.getElementById('validating-hint').textContent='A verificar palavra...';
+  const valid=await validateWord(guess);
+  document.getElementById('validating-hint').textContent='';
+  setLoading(false);
+
+  if(!valid){setError('Palavra não encontrada no dicionário português.');shake();return;}
+  clearError();
+
+  attempts++;
+
+  if(guess===secret){
+    endGame(true);
+    return;
+  }
+
+  const before=strCmp(secret,guess)<0;
+
+  if(before){
+    lowerBound=guess;
+    document.getElementById('lower-word').textContent=guess.toUpperCase();
+  } else {
+    upperBound=guess;
+    document.getElementById('upper-word').textContent=guess.toUpperCase();
+  }
+
+  calcBar();
+  updateSlotPcts();
+
+  document.getElementById('attempt-badge').textContent=(attempts+1)+' / '+MAX_ATT;
+  document.getElementById('pts').textContent=Math.max(0,5-Math.floor(attempts/2));
+  inp.value='';
+  buildKeyboard();
+  buildAlphabet();
+  inp.focus();
+
+  if(attempts>=MAX_ATT) endGame(false);
+}
+
+/* ─── END GAME ────────────────────────────────── */
+function endGame(won){
+  gameOver=true;
+  const s=stats[gameMode];
+  s.played++;
+  document.getElementById('word-input').disabled=true;
+  document.getElementById('submit-btn').disabled=true;
+  const score=Math.max(0,5-Math.floor((attempts-1)/2));
+  const box=document.getElementById('result-box');
+  
+  if(won){
+    s.wins++;s.streak++;
+    if(s.streak>s.best)s.best=s.streak;
+    box.className='result-box win';
+    document.getElementById('result-title').textContent=
+      attempts===1?'Incrível! Primeira tentativa!':`Parabéns! Em ${attempts} tentativa${attempts>1?'s':''}`;
+    document.getElementById('result-secret').textContent=secret.toUpperCase();
+    document.getElementById('result-secret').className='result-secret win';
+    document.getElementById('result-sub').textContent=`Pontuação: ${score} pontos`;
+    if(gameMode==='daily') markDailyPlayed();
+  } else {
+    s.streak=0;
+    box.className='result-box lose';
+    document.getElementById('result-title').textContent='Que pena! Chegaste ao limite.';
+    document.getElementById('result-secret').textContent=secret.toUpperCase();
+    document.getElementById('result-secret').className='result-secret lose';
+    document.getElementById('result-sub').textContent='Esta era a palavra secreta.';
+    if(gameMode==='daily') markDailyPlayed();
+  }
+  updateStats();
+  saveStats();
+}
+
+/* ─── HELPERS ─────────────────────────────────── */
+function setError(msg){document.getElementById('error-line').textContent=msg;}
+function clearError(){document.getElementById('error-line').textContent='';}
+function showStatus(msg,type){
+  const banner=document.getElementById('status-banner');
+  banner.textContent=msg;
+  banner.classList.add('show');
+}
+function shake(){
+  const inp=document.getElementById('word-input');
+  inp.classList.add('shake');
+  setTimeout(()=>inp.classList.remove('shake'),350);
+}
+function setLoading(on){
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=on;
+  btn.textContent=on?'...':'Tentar';
+}
+function toggleHelp(){document.getElementById('help-box').classList.toggle('open');}
+function newGame(){initGame();}
+
+document.getElementById('word-input').addEventListener('input',()=>{clearError();buildKeyboard();buildAlphabet();});
+document.getElementById('word-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter')submitGuess();
+});
+
+loadStats();
+initGame();
+</script>
+</body>
+</html>
