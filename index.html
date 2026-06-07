@@ -58,12 +58,26 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 .word-slot{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2)}
 .word-slot.upper{margin-bottom:7px}
 .word-slot.lower{margin-top:7px}
-.slot-arrow{font-size:18px;color:var(--text3);min-width:18px;text-align:center}
+.slot-arrow{
+  font-size:20px;
+  color:var(--teal-mid);
+  min-width:40px;
+  height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:800;
+  border-radius:50%;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+}
 .slot-word{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;flex:1;color:var(--text)}
-.slot-pct{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:var(--radius-sm);background:var(--amber-light);color:var(--amber-mid);white-space:nowrap;text-align:right;min-width:45px}
+.slot-pct{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:4px 6px;border-radius:6px;background:var(--amber-light);color:var(--amber-mid);white-space:nowrap;text-align:center;min-width:34px;margin-left:6px}
 @media(prefers-color-scheme:dark){.slot-pct{color:var(--amber)}}
 
-.bar-wrap{display:flex;align-items:center;gap:10px;margin:2px 10px}
+.bar-wrap{display:flex;align-items:center;gap:12px;margin:2px 10px}
 .bar-track{flex:1;height:5px;background:var(--surface2);border-radius:3px;border:1px solid var(--border);position:relative}
 .bar-fill{position:absolute;top:0;bottom:0;background:var(--teal-border);border-radius:3px;transition:all .4s ease}
 .bar-pct{font-family:'Space Mono',monospace;font-size:10px;color:var(--text2);min-width:34px;text-align:right}
@@ -88,6 +102,36 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 .submit-btn{padding:11px 18px;background:var(--teal-mid);color:#fff;border:none;border-radius:var(--radius);font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s;white-space:nowrap}
 .submit-btn:hover{opacity:.85}
 .submit-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Middle circular submit button when placed between words */
+.submit-btn.middle{
+  width:52px;
+  height:52px;
+  padding:0;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  box-shadow:0 8px 18px rgba(13,110,86,0.12);
+  border:2px solid rgba(255,255,255,0.04);
+}
+/* Input when placed between words */
+.middle-input{
+  max-width:220px;
+  width:38%;
+  padding:10px 12px;
+  font-size:15px;
+  text-align:center;
+  box-shadow:0 6px 14px rgba(0,0,0,0.06);
+  border:2px solid var(--border2);
+  background:var(--surface);
+  border-radius:8px;
+}
+/* Center slot to match width of upper/lower slots */
+.center-slot{display:flex;align-items:center;gap:8px}
+.slot-word-input{display:flex;align-items:center;justify-content:center;flex:1}
+.slot-word-input input{width:100%;border:none;background:transparent;padding:8px 6px;font-family:'Space Mono',monospace;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-align:center;outline:none}
 .error-line{font-size:12px;color:var(--red-mid);min-height:16px;margin-bottom:6px;font-weight:600}
 @media(prefers-color-scheme:dark){.error-line{color:var(--red)}}
 .validating-hint{font-size:11px;color:var(--text3);text-align:center;min-height:14px;margin-bottom:4px}
@@ -128,6 +172,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
     </div>
   </header>
 
+
   <div class="mode-selector">
     <button class="mode-btn active" id="daily-btn" onclick="switchMode('daily')">Diário</button>
     <button class="mode-btn" id="free-btn" onclick="switchMode('free')">Livre</button>
@@ -145,19 +190,23 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
   <div class="range-panel">
     <div class="word-slot upper">
       <span class="slot-arrow">↑</span>
-      <span class="slot-word" id="upper-word">AAAAA</span>
       <span class="slot-pct" id="upper-pct" style="display:none"></span>
+      <span class="slot-word" id="upper-word">AAAAA</span>
     </div>
     <div class="bar-wrap">
       <div class="bar-track">
-        <div class="bar-fill" id="bar-fill" style="left:0%;width:100%"></div>
-      </div>
-      <span class="bar-pct" id="bar-pct">100</span>
+            <div class="bar-fill" id="bar-fill" style="left:0%;width:100%"></div>
+          </div>
+          <div class="center-slot">
+            <span class="slot-word slot-word-input"><input type="text" id="word-input" class="word-input middle-input" placeholder="5 letras" maxlength="5" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/></span>
+            <button class="submit-btn" id="submit-btn" onclick="submitGuess()">Tentar</button>
+          </div>
+          <span class="bar-pct" id="bar-pct">100</span>
     </div>
     <div class="word-slot lower">
       <span class="slot-arrow">↓</span>
-      <span class="slot-word" id="lower-word">ZZZZZ</span>
       <span class="slot-pct" id="lower-pct" style="display:none"></span>
+      <span class="slot-word" id="lower-word">ZZZZZ</span>
     </div>
   </div>
 
@@ -168,11 +217,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
     <button class="new-btn" onclick="newGame()">Novo Jogo</button>
   </div>
 
-  <div class="input-row">
-    <input type="text" id="word-input" class="word-input" placeholder="5 letras" maxlength="5"
-      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-    <button class="submit-btn" id="submit-btn" onclick="submitGuess()">Tentar</button>
-  </div>
+  
   <div class="error-line" id="error-line"></div>
   <div class="validating-hint" id="validating-hint"></div>
 
@@ -195,6 +240,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 const MAX_ATT=12;
 let gameMode='daily'; // 'daily' or 'free'
 let secret='', upperBound='aaaaa', lowerBound='zzzzz', attempts=0, gameOver=false;
+let upperDist=null, lowerDist=null; // fixed distances for displayed upper/lower words
 let stats={daily:{played:0,wins:0,streak:0,best:0},free:{played:0,wins:0,streak:0,best:0}};
 let wordCache=new Map(); // Cache de palavras validadas
 
@@ -203,7 +249,7 @@ function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowe
 function strCmp(a,b){return a<b?-1:a>b?1:0;}
 
 function formatDist(d){
-  if(d<0.01) return d.toFixed(2);
+  if(d<1) return d.toFixed(2);
   if(d<10) return d.toFixed(1);
   return Math.round(d).toString();
 }
@@ -230,7 +276,18 @@ function getDailySecret(){
   const key='daily_secret_'+getTodayKey();
   let word=sessionStorage.getItem(key);
   if(!word){
-    word=pickSecretRandom();
+    // pick a daily secret avoiding words used in the last 400 days (if possible)
+    const cutoffDays=400;
+    const today=new Date();
+    const cutoff=new Date(today.getTime()-cutoffDays*24*60*60*1000);
+    const recent=new Set((dailyHistory||[]).filter(e=>{
+      const d=new Date(e.date);
+      return d>=cutoff;
+    }).map(e=>e.word));
+    let pool=(wordsList && wordsList.length)?wordsList.filter(w=>!recent.has(w)):[];
+    if(!pool.length) pool = (wordsList && wordsList.length)?wordsList:[];
+    if(!pool.length) pool=['resto','rezar','pedra','comer','jugar','risco','verde','entre','lugar','porta'];
+    word = pool[Math.floor(Math.random()*pool.length)];
     sessionStorage.setItem(key,word);
   }
   return word;
@@ -247,18 +304,25 @@ function markDailyPlayed(){
 }
 
 /* ─── SMART KEYBOARD ────────────────────────── */
+let wordsList=[];
+let wordsSet=new Set();
+
 function getValidLetters(typed){
   const pos=typed.length;
   if(pos>=5) return new Set();
   const valid=new Set();
+  if(!wordsList.length) return valid;
   for(let c=97;c<=122;c++){
     const letter=String.fromCharCode(c);
     const prefix=typed+letter;
-    const lo=prefix+'aaaaa'.slice(prefix.length);
-    const hi=prefix+'zzzzz'.slice(prefix.length);
-    if(strCmp(lo,lowerBound)<0 && strCmp(hi,upperBound)>0){
-      valid.add(letter);
-    }
+    // if any word in wordsList starts with this prefix and lies between bounds
+    const ok=wordsList.some(w=>{
+      if(!w.startsWith(prefix)) return false;
+      if(strCmp(w,lowerBound)<=0) return false;
+      if(strCmp(w,upperBound)>=0) return false;
+      return true;
+    });
+    if(ok) valid.add(letter);
   }
   return valid;
 }
@@ -321,24 +385,53 @@ function handleKey(k){
 
 /* ─── DISTANCE ─────────────────────────────────── */
 function pickSecretRandom(){
-  // Gera uma palavra aleatória válida
-  // Como não temos lista pré-carregada, vamos usar a API para gerar
-  // Por enquanto, retorna uma palavra "aleatória" de um conjunto base
+  // Gera uma palavra aleatória válida a partir da lista carregada
+  if(wordsList && wordsList.length){
+    return wordsList[Math.floor(Math.random()*wordsList.length)];
+  }
   const baseWords=['resto','rezar','pedra','comer','jugar','risco','verde','entre','lugar','porta'];
   return baseWords[Math.floor(Math.random()*baseWords.length)];
 }
 
 function getIdx(w){
-  // Aproximação: usa apenas a primeira letra + posição relativa estimada
-  return w.charCodeAt(0)-97+Math.random()*26;
+  // Deterministic index: prefer index in wordsList if available
+  const ww=norm(w);
+  if(wordsList && wordsList.length){
+    const idx=wordsList.indexOf(ww);
+    if(idx>=0) return idx;
+    // if not found, approximate by first letter position
+  }
+  // fallback: deterministic char-based index (no randomness)
+  let sum=0;
+  for(let i=0;i<ww.length;i++) sum += (ww.charCodeAt(i)-97);
+  return sum;
 }
 
 function distPct(guessWord){
   const si=getIdx(secret);
   const gi=getIdx(guessWord);
-  const d=Math.abs(si-gi);
-  const pct=(d/52)*100; // 26 letras * 2
-  return pct;
+  const g=norm(guessWord);
+  const s=norm(secret);
+  if(wordsList && wordsList.length){
+    const si=wordsList.indexOf(s);
+    const gi=wordsList.indexOf(g);
+    const maxD=Math.max(1, wordsList.length-1);
+    if(si>=0 && gi>=0){
+      const d=Math.abs(si-gi);
+      return (d/maxD)*100;
+    }
+    // if one or both words not in list, fall back to deterministic idx but scale by list length
+    const si2 = si>=0?si:getIdx(s);
+    const gi2 = gi>=0?gi:getIdx(g);
+    const d2 = Math.abs(si2-gi2);
+    return Math.min(100,(d2/maxD)*100);
+  } else {
+    const si=getIdx(s);
+    const gi=getIdx(g);
+    const maxFallback=26*5; // approx max by char-sum for 5 letters
+    const d=Math.abs(si-gi);
+    return Math.min(100,(d/maxFallback)*100);
+  }
 }
 
 function calcBar(){
@@ -352,12 +445,12 @@ function updateSlotPcts(){
     upEl.style.display='none';loEl.style.display='none';return;
   }
   if(upperBound!=='aaaaa'){
-    const p=distPct(upperBound);
-    upEl.textContent=formatDist(p);upEl.style.display='';
+    if(upperDist!=null){ upEl.textContent=formatDist(upperDist); upEl.style.display=''; }
+    else { const p=distPct(upperBound); upEl.textContent=formatDist(p); upEl.style.display=''; }
   } else {upEl.style.display='none';}
   if(lowerBound!=='zzzzz'){
-    const p=distPct(lowerBound);
-    loEl.textContent=formatDist(p);loEl.style.display='';
+    if(lowerDist!=null){ loEl.textContent=formatDist(lowerDist); loEl.style.display=''; }
+    else { const p=distPct(lowerBound); loEl.textContent=formatDist(p); loEl.style.display=''; }
   } else {loEl.style.display='none';}
 }
 
@@ -375,6 +468,7 @@ function switchMode(mode){
 function initGame(){
   attempts=0;gameOver=false;
   upperBound='aaaaa';lowerBound='zzzzz';
+  upperDist=null; lowerDist=null;
   
   // Check daily limit
   if(gameMode==='daily'){
@@ -430,28 +524,9 @@ function updateStats(){
 /* ─── VALIDATE via API ───────────────────────── */
 async function validateWord(word){
   if(wordCache.has(word)) return wordCache.get(word);
-  
-  try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
-        max_tokens:60,
-        system:`You are a Portuguese dictionary validator. When given a 5-letter sequence, respond ONLY with JSON: {"valid":true} if it is a real Portuguese word, or {"valid":false} if not. No explanation.`,
-        messages:[{role:"user",content:word}]
-      })
-    });
-    const data=await res.json();
-    if(!data.content||!data.content[0]) return false;
-    const txt=data.content.map(b=>b.text||"").join("").trim().replace(/```json|```/g,"");
-    const result=JSON.parse(txt).valid===true;
-    wordCache.set(word,result);
-    return result;
-  }catch(e){
-    console.error('Validation error:',e);
-    return false;
-  }
+  const result = wordsSet.has(word);
+  wordCache.set(word,result);
+  return result;
 }
 
 /* ─── SUBMIT ─────────────────────────────────── */
@@ -491,9 +566,13 @@ async function submitGuess(){
   if(before){
     lowerBound=guess;
     document.getElementById('lower-word').textContent=guess.toUpperCase();
+    // store fixed distance for this lower slot
+    lowerDist = distPct(lowerBound);
   } else {
     upperBound=guess;
     document.getElementById('upper-word').textContent=guess.toUpperCase();
+    // store fixed distance for this upper slot
+    upperDist = distPct(upperBound);
   }
 
   calcBar();
@@ -568,8 +647,37 @@ document.getElementById('word-input').addEventListener('keydown',e=>{
   if(e.key==='Enter')submitGuess();
 });
 
-loadStats();
-initGame();
+// Load words and daily history before starting
+let dailyHistory=[];
+async function loadWords(){
+  try{
+    const res=await fetch('https://raw.githubusercontent.com/joaog21/entreLinhas/production/words_api.txt');
+    if(!res.ok) throw new Error('not ok');
+    const txt=await res.text();
+    processWordsText(txt);
+  }catch(e){
+    console.error('Could not load words_api.txt from GitHub',e);
+    wordsList=[];wordsSet=new Set();
+  }
+}
+
+
+function processWordsText(txt){
+  wordsList=txt.split(/\r?\n/).map(s=>norm(s)).filter(s=>s.length===5 && /^[a-z]+$/.test(s));
+  wordsList=Array.from(new Set(wordsList)).sort();
+  wordsSet=new Set(wordsList);
+}
+async function loadDailyHistory(){
+  try{
+    const res=await fetch('daily_history.json');
+    if(res.ok){
+      const j=await res.json();
+      dailyHistory=(j||[]).map(e=>({word:norm(e.word||''),date:e.date}));
+    } else { dailyHistory=[]; }
+  }catch(e){dailyHistory=[];}
+}
+
+loadWords().then(()=>loadDailyHistory()).then(()=>{loadStats();initGame();}).catch(e=>{console.error(e);loadStats();initGame();});
 </script>
 </body>
 </html>
