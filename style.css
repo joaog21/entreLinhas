@@ -6,8 +6,8 @@
 
 body {
     font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #edf2f7;
-    color: #1f2937;
+    background: #eef2ff;
+    color: #0f172a;
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -32,7 +32,7 @@ header h1 {
 }
 
 header .subtitle {
-    color: #4b5563;
+    color: #334155;
     font-size: 1rem;
 }
 
@@ -45,13 +45,13 @@ header .subtitle {
 
 .daily-status {
     text-align: center;
-    background: #eff6ff;
+    background: #e0f2fe;
     color: #1d4ed8;
-    border: 1px solid #dbeafe;
+    border: 1px solid #93c5fd;
     border-radius: 16px;
     padding: 12px 14px;
     margin-bottom: 22px;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .interval-row {
@@ -93,31 +93,31 @@ header .subtitle {
 #guessInput {
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid #d1d5db;
+    border: 1px solid #93c5fd;
     border-radius: 16px;
     font-size: 1rem;
-    background: #fefefe;
-    color: #111827;
+    background: #f8fbff;
+    color: #0f172a;
 }
 
 #guessInput:focus {
     outline: none;
-    border-color: #94a3b8;
-    box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.16);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.16);
 }
 
 #submitBtn {
     padding: 14px 18px;
     border: none;
     border-radius: 16px;
-    background: #334155;
+    background: #1d4ed8;
     color: white;
     font-weight: 700;
     cursor: pointer;
 }
 
 #submitBtn:hover {
-    background: #1f2937;
+    background: #2563eb;
 }
 
 .message {
@@ -165,8 +165,8 @@ header .subtitle {
 }
 
 .stat-item {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
     border-radius: 16px;
     padding: 16px;
     text-align: center;
@@ -175,7 +175,7 @@ header .subtitle {
 .stat-item .stat-label {
     display: block;
     font-size: 0.75rem;
-    color: #64748b;
+    color: #1e3a8a;
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -199,9 +199,9 @@ header .subtitle {
     min-width: 240px;
     border-radius: 22px;
     padding: 28px 24px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
+    background: #f8fbff;
+    border: 1px solid #dbeafe;
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.08);
 }
 
 .guess-card span {
@@ -220,15 +220,15 @@ header .subtitle {
 }
 
 .alphabet-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
     border-radius: 20px;
     padding: 18px 16px;
     margin-bottom: 22px;
 }
 
 .alphabet-title {
-    color: #334155;
+    color: #1e3a8a;
     font-size: 0.9rem;
     font-weight: 700;
     margin-bottom: 10px;
