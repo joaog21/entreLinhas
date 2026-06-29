@@ -9,24 +9,26 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --green:#27500A;--green-mid:#3B6D11;--green-light:#EAF3DE;--green-border:#639922;
-  --amber:#854F0B;--amber-mid:#BA7517;--amber-light:#FAEEDA;--amber-border:#EF9F27;
-  --red:#791F1F;--red-mid:#A32D2D;--red-light:#FCEBEB;--red-border:#E24B4A;
-  --teal:#085041;--teal-mid:#0F6E56;--teal-light:#E1F5EE;--teal-border:#1D9E75;
-  --bg:#fafaf8;--surface:#fff;--surface2:#f4f3ef;
-  --text:#1a1a18;--text2:#5a5a56;--text3:#9a9a94;
-  --border:rgba(0,0,0,0.10);--border2:rgba(0,0,0,0.18);
+  --green:#059669;--green-mid:#10b981;--green-light:#d1fae5;--green-border:#10b981;
+  --amber:#d97706;--amber-mid:#f59e0b;--amber-light:#fef3c7;--amber-border:#f59e0b;
+  --red:#dc2626;--red-mid:#ef4444;--red-light:#fee2e2;--red-border:#ef4444;
+  --teal:#0891b2;--teal-mid:#06b6d4;--teal-light:#cffafe;--teal-border:#06b6d4;
+  --blue:#2563eb;--blue-mid:#3b82f6;--blue-light:#dbeafe;--blue-border:#3b82f6;
+  --bg:#f0f9ff;--surface:#ffffff;--surface2:#eff6ff;
+  --text:#0f172a;--text2:#334155;--text3:#64748b;
+  --border:rgba(59,130,246,0.2);--border2:rgba(59,130,246,0.3);
   --radius:10px;--radius-sm:6px;--radius-lg:14px;
 }
 @media(prefers-color-scheme:dark){
   :root{
-    --bg:#1a1a18;--surface:#242420;--surface2:#2e2e2a;
-    --text:#f0efe8;--text2:#9a9a94;--text3:#5a5a56;
-    --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.16);
-    --green-light:#173404;--green-border:#3B6D11;--green:#C0DD97;
-    --teal-light:#04342C;--teal-border:#0F6E56;--teal:#9FE1CB;
-    --amber-light:#412402;--amber-border:#854F0B;--amber:#FAC775;
-    --red-light:#501313;--red-border:#791F1F;--red:#F7C1C1;
+    --bg:#051225;--surface:#0f172a;--surface2:#1e3a8a;
+    --text:#e0f2fe;--text2:#93c5fd;--text3:#64748b;
+    --border:rgba(59,130,246,0.3);--border2:rgba(59,130,246,0.5);
+    --blue-light:#1e3a8a;--blue-border:#3b82f6;--blue:#60a5fa;
+    --teal-light:#0d4a4a;--teal-border:#06b6d4;--teal:#10b981;
+    --green-light:#1d4a1d;--green-border:#10b981;--green:#4ade80;
+    --amber-light:#5c3400;--amber-border:#f59e0b;--amber:#fbbf24;
+    --red-light:#5c2828;--red-border:#ef4444;--red:#f87171;
   }
 }
 html,body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif}
@@ -99,9 +101,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 .word-input:focus{border-color:var(--teal-border);box-shadow:0 0 0 2px rgba(29,158,117,.14)}
 .word-input.shake{animation:shake .3s ease}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-.submit-btn{padding:11px 18px;background:var(--teal-mid);color:#fff;border:none;border-radius:var(--radius);font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s;white-space:nowrap}
-.submit-btn:hover{opacity:.85}
-.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.submit-btn{padding:11px 18px;background:var(--blue-mid);color:#fff;border:none;border-radius:var(--radius);font-family:'Syne',sans-serif;font-weight:800;font-size:14px;cursor:pointer;transition:all .2s;white-space:nowrap;box-shadow:0 4px 12px rgba(37,99,235,0.3)}
+.submit-btn:hover{background:var(--blue-border);box-shadow:0 6px 16px rgba(37,99,235,0.4)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
 
 /* Middle circular submit button when placed between words */
 .submit-btn.middle{
@@ -113,8 +115,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
   align-items:center;
   justify-content:center;
   font-size:15px;
-  box-shadow:0 8px 18px rgba(13,110,86,0.12);
-  border:2px solid rgba(255,255,255,0.04);
+  box-shadow:0 8px 18px rgba(37,99,235,0.25);
+  border:2px solid rgba(255,255,255,0.2);
 }
 /* Input when placed between words */
 .middle-input{
@@ -136,8 +138,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 @media(prefers-color-scheme:dark){.error-line{color:var(--red)}}
 .validating-hint{font-size:11px;color:var(--text3);text-align:center;min-height:14px;margin-bottom:4px}
 
-.alphabet-row{display:flex;justify-content:center;gap:4px;margin-bottom:8px;flex-wrap:wrap;padding:8px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)}
-.alpha-letter{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;cursor:default}
+.alphabet-row{display:flex;justify-content:center;gap:6px;margin-bottom:10px;flex-wrap:wrap;padding:10px 12px;background:var(--blue-light);border-radius:var(--radius-lg);border:2px solid var(--blue-border);min-height:32px}
+.alpha-letter{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text);text-transform:uppercase;cursor:default;display:inline-block;min-width:22px;text-align:center}
+.alpha-letter.possible{color:var(--teal-mid);opacity:1;font-weight:800}
+.alpha-letter.excluded{color:var(--text3);opacity:0.2}
 
 .keyboard{display:flex;flex-direction:column;gap:5px;user-select:none;margin-top:4px}
 .kb-row{display:flex;justify-content:center;gap:4px}
@@ -152,9 +156,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 }
 .kb-key:active{transform:scale(.93)}
 .kb-key.wide{max-width:52px;font-size:11px;min-width:38px}
-.kb-key.available{background:var(--surface);border-color:var(--border2);color:var(--text)}
-.kb-key.unavailable{background:transparent;border-color:var(--border);color:var(--text3);opacity:.28;pointer-events:none}
-.kb-key.special{background:var(--surface);border-color:var(--border2);color:var(--text);max-width:52px;min-width:38px}
+.kb-key.available{background:var(--teal-light);border-color:var(--teal-border);color:var(--text);font-weight:800}
+.kb-key.unavailable{background:transparent;border-color:var(--border);color:var(--text3);opacity:.2;pointer-events:none}
+.kb-key.special{background:var(--blue-light);border-color:var(--blue-border);color:var(--text);font-weight:700;max-width:52px;min-width:38px}
 
 .help-toggle{font-size:11px;color:var(--text2);text-align:center;cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:12px 0 0}
 .help-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;font-size:12px;color:var(--text2);line-height:1.75;margin-top:8px;display:none}
@@ -239,10 +243,10 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 <script>
 const MAX_ATT=12;
 let gameMode='daily'; // 'daily' or 'free'
-let secret='', upperBound='aaaaa', lowerBound='zzzzz', attempts=0, gameOver=false;
-let upperDist=null, lowerDist=null; // fixed distances for displayed upper/lower words
-let stats={daily:{played:0,wins:0,streak:0,best:0},free:{played:0,wins:0,streak:0,best:0}};
-let wordCache=new Map(); // Cache de palavras validadas
+var secret='', lowerBound='aaaaa', upperBound='zzzzz', attempts=0, gameOver=false;
+var upperDist=null, lowerDist=null; // fixed distances for displayed upper/lower words
+var stats={daily:{played:0,wins:0,streak:0,best:0},free:{played:0,wins:0,streak:0,best:0}};
+var wordCache=new Map(); // Cache de palavras validadas
 
 /* ─── UTILS ─────────────────────────────────── */
 function norm(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();}
@@ -304,22 +308,34 @@ function markDailyPlayed(){
 }
 
 /* ─── SMART KEYBOARD ────────────────────────── */
-let wordsList=[];
-let wordsSet=new Set();
+var wordsList=[];
+var wordsSet=new Set();
+const FALLBACK_WORDS=['abada','abade','abado','abafo','abaju','abalo','abama','abano','abapo','abate','abeta','abete','abeto','abibe','abido','abiga','abita','aboio','abono','abreu','abril','abrir','abuna','abuso','abuta','acada','acaia','acaio','acaju','acapu','acari','acaso','acava','acena','aceno','acero','aceso','aceto','achar','acheu','achim','acima','acola','acolá','acori','actol','actor','acuar','acume','acuse','acuso','acuta','adaca','adaga','adail','addir','adega','adejo','adela','adelo','adema','adeos','adeso','adeus','adiar','adibe','adido','adino','adita','adoba','adobe','adobo','adoli','adova','adoxa','adoxo','aduar','aduba','adube','adubo','adufa','adufe','adufo','adulo','aduro','advir','aerva','afago','afano','afear','affim','afiar','afilo','afito','afixo','aflar','afora','afurá','agami','agara','agaré','agati','agave','ageia','agema','agoge','agone','agora','agrar','agraz','agror','agrão','agrém','aguar','agude','agudo','aguti','aguça','aguço','agyno'];
+
+// Initialize with fallback
+function initWordsList(){
+  wordsList=(FALLBACK_WORDS||[]).map(s=>norm(s)).filter(s=>s.length===5 && /^[a-z]+$/.test(s));
+  wordsList=Array.from(new Set(wordsList)).sort();
+  wordsSet=new Set(wordsList);
+}
+initWordsList();
 
 function getValidLetters(typed){
   const pos=typed.length;
   if(pos>=5) return new Set();
   const valid=new Set();
   if(!wordsList.length) return valid;
+  
+  const lowerNorm=norm(lowerBound);
+  const upperNorm=norm(upperBound);
+  
   for(let c=97;c<=122;c++){
     const letter=String.fromCharCode(c);
     const prefix=typed+letter;
-    // if any word in wordsList starts with this prefix and lies between bounds
     const ok=wordsList.some(w=>{
       if(!w.startsWith(prefix)) return false;
-      if(strCmp(w,lowerBound)<=0) return false;
-      if(strCmp(w,upperBound)>=0) return false;
+      if(strCmp(w,lowerNorm)<=0) return false;
+      if(strCmp(w,upperNorm)>=0) return false;
       return true;
     });
     if(ok) valid.add(letter);
@@ -335,9 +351,8 @@ function buildAlphabet(){
   for(let c=97;c<=122;c++){
     const letter=String.fromCharCode(c);
     const span=document.createElement('span');
-    span.className='alpha-letter';
-    span.textContent=letter;
-    span.style.opacity=valid.has(letter)?'1':'0.3';
+    span.className='alpha-letter '+(valid.has(letter)?'possible':'excluded');
+    span.textContent=letter.toUpperCase();
     row.appendChild(span);
   }
 }
@@ -441,7 +456,7 @@ function calcBar(){
 function updateSlotPcts(){
   const upEl=document.getElementById('upper-pct');
   const loEl=document.getElementById('lower-pct');
-  if(upperBound==='aaaaa'&&lowerBound==='zzzzz'){
+  if(lowerBound==='aaaaa'&&upperBound==='zzzzz'){
     upEl.style.display='none';loEl.style.display='none';return;
   }
   if(upperBound!=='aaaaa'){
@@ -467,7 +482,7 @@ function switchMode(mode){
 /* ─── INIT GAME ──────────────────────────────── */
 function initGame(){
   attempts=0;gameOver=false;
-  upperBound='aaaaa';lowerBound='zzzzz';
+  upperBound='zzzzz';lowerBound='aaaaa';
   upperDist=null; lowerDist=null;
   
   // Check daily limit
@@ -564,15 +579,15 @@ async function submitGuess(){
   const before=strCmp(secret,guess)<0;
 
   if(before){
-    lowerBound=guess;
-    document.getElementById('lower-word').textContent=guess.toUpperCase();
-    // store fixed distance for this lower slot
-    lowerDist = distPct(lowerBound);
-  } else {
+    // secret < guess, so guess is the new upper bound
     upperBound=guess;
-    document.getElementById('upper-word').textContent=guess.toUpperCase();
-    // store fixed distance for this upper slot
+    document.getElementById('lower-word').textContent=guess.toUpperCase();
     upperDist = distPct(upperBound);
+  } else {
+    // secret > guess, so guess is the new lower bound
+    lowerBound=guess;
+    document.getElementById('upper-word').textContent=guess.toUpperCase();
+    lowerDist = distPct(lowerBound);
   }
 
   calcBar();
@@ -648,19 +663,36 @@ document.getElementById('word-input').addEventListener('keydown',e=>{
 });
 
 // Load words and daily history before starting
-let dailyHistory=[];
+var dailyHistory=[];
+
 async function loadWords(){
+  try{
+    const res=await fetch('words_api.json');
+    if(res.ok){
+      const data=await res.json();
+      processWordsArray(data);
+      console.log('Loaded words_api.json successfully');
+      return;
+    }
+  }catch(e){
+    console.warn('Could not load local words_api.json',e);
+  }
   try{
     const res=await fetch('https://raw.githubusercontent.com/joaog21/entreLinhas/production/words_api.txt');
     if(!res.ok) throw new Error('not ok');
     const txt=await res.text();
     processWordsText(txt);
+    console.log('Loaded words_api.txt from GitHub successfully');
   }catch(e){
-    console.error('Could not load words_api.txt from GitHub',e);
-    wordsList=[];wordsSet=new Set();
+    console.warn('Could not load words from GitHub, using fallback');
   }
 }
 
+function processWordsArray(arr){
+  wordsList=(arr||[]).map(s=>norm(s)).filter(s=>s.length===5 && /^[a-z]+$/.test(s));
+  wordsList=Array.from(new Set(wordsList)).sort();
+  wordsSet=new Set(wordsList);
+}
 
 function processWordsText(txt){
   wordsList=txt.split(/\r?\n/).map(s=>norm(s)).filter(s=>s.length===5 && /^[a-z]+$/.test(s));
