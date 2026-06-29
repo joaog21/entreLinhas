@@ -12,9 +12,11 @@ class BetweenleGame {
         this.score = 0;
         this.gameOver = false;
         this.loading = false;
+        this.commonWords = new Set();
+        this.commonWordsList = [];
 
         this.prepareElements();
-        this.init();
+        this.loadWordList().then(() => this.init());
     }
 
     prepareElements() {
@@ -59,6 +61,24 @@ class BetweenleGame {
         });
 
         this.resetGame();
+    }
+
+    async loadWordList() {
+        try {
+            const response = await fetch('words_api.txt');
+            if (!response.ok) throw new Error('Falha ao carregar lista local de palavras');
+            const text = await response.text();
+            const words = text
+                .split(/\r?\n/)
+                .map((word) => this.removeAccents(word.trim().toLowerCase()))
+                .filter((word) => word.length > 0);
+            this.commonWordsList = Array.from(new Set(words)).sort();
+            this.commonWords = new Set(this.commonWordsList);
+        } catch (error) {
+            console.warn('Erro ao carregar words_api.txt:', error);
+            this.commonWordsList = [];
+            this.commonWords = new Set();
+        }
     }
 
     async loadDailyWord() {
@@ -196,17 +216,55 @@ class BetweenleGame {
     }
 
     async checkWordExists(word) {
-        try {
-            const response = await fetch(`${API_BASE}/word/${encodeURIComponent(word)}`);
-            if (!response.ok) {
-                return false;
-            }
-            const data = await response.json();
-            return Array.isArray(data) && data.length > 0;
-        } catch (error) {
-            console.warn('Erro ao verificar palavra:', error);
-            return false;
+        const normalized = this.removeAccents(this.normalize(word));
+        if (this.commonWords.has(normalized)) {
+            return true;
         }
+
+        const singulars = this.getSingularCandidates(normalized);
+        for (const candidate of singulars) {
+            if (this.commonWords.has(candidate)) {
+                return true;
+            }
+        }
+
+        return await this.checkRemoteWord(word, [normalized, ...singulars]);
+    }
+
+    async checkRemoteWord(word, candidates = []) {
+        const candidatesToTry = [word.toLowerCase(), this.removeAccents(word.toLowerCase()), ...candidates];
+        const seen = new Set();
+
+        for (const candidate of candidatesToTry) {
+            if (!candidate || seen.has(candidate)) continue;
+            seen.add(candidate);
+            try {
+                const response = await fetch(`${API_BASE}/word/${encodeURIComponent(candidate)}`);
+                if (!response.ok) continue;
+                const data = await response.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    return true;
+                }
+            } catch (error) {
+                console.warn('Erro ao verificar palavra remota:', error);
+            }
+        }
+
+        return false;
+    }
+
+    getSingularCandidates(word) {
+        const candidates = [];
+        if (word.endsWith('ões')) candidates.push(word.slice(0, -3) + 'ão');
+        if (word.endsWith('ães')) candidates.push(word.slice(0, -3) + 'ão');
+        if (word.endsWith('ais')) candidates.push(word.slice(0, -3) + 'al');
+        if (word.endsWith('eis')) candidates.push(word.slice(0, -3) + 'el');
+        if (word.endsWith('ois')) candidates.push(word.slice(0, -3) + 'ol');
+        if (word.endsWith('uis')) candidates.push(word.slice(0, -3) + 'ul');
+        if (word.endsWith('ões')) candidates.push(word.slice(0, -2));
+        if (word.endsWith('es')) candidates.push(word.slice(0, -2));
+        if (word.endsWith('s')) candidates.push(word.slice(0, -1));
+        return Array.from(new Set(candidates)).filter(Boolean);
     }
 
     normalize(text) {
@@ -286,17 +344,20 @@ class BetweenleGame {
         const letters = Array.from({ length: 26 }, (_, index) => String.fromCharCode(65 + index));
         const lower = this.lowerBound ? this.lowerBound.toUpperCase() : null;
         const upper = this.upperBound ? this.upperBound.toUpperCase() : null;
-        const { prefix, possible } = this.computeAlphabetConstraints(lower, upper);
+        const currentPrefix = this.normalize(this.el.guessInput.value).toUpperCase();
+        const { fixedPrefix, possible } = this.computeAlphabetConstraints(lower, upper, currentPrefix);
 
         this.el.alphabetRow.innerHTML = letters.map((letter) => {
-            const isFixed = prefix.includes(letter);
+            const isFixed = fixedPrefix.includes(letter);
             const isPossible = possible.includes(letter);
             const stateClass = isFixed ? 'letter-fixed' : isPossible ? 'letter-possible' : 'letter-excluded';
             return `<span class="letter-block ${stateClass}">${letter}</span>`;
         }).join('');
 
-        if (prefix.length > 0) {
-            this.el.alphabetHint.textContent = `Prefixo fixo: ${prefix.join('')}`;
+        if (fixedPrefix.length > 0) {
+            this.el.alphabetHint.textContent = `Prefixo fixo: ${fixedPrefix.join('')}`;
+        } else if (currentPrefix.length > 0) {
+            this.el.alphabetHint.textContent = possible.length > 0 ? `Letras possíveis para a próxima posição de "${currentPrefix}": ${possible.join('')}` : 'Nenhuma letra possível para esse prefixo.';
         } else if (possible.length === 26) {
             this.el.alphabetHint.textContent = 'Todas as letras ainda são possíveis.';
         } else if (possible.length > 0) {
@@ -306,23 +367,57 @@ class BetweenleGame {
         }
     }
 
-    computeAlphabetConstraints(lower, upper) {
+    computeAlphabetConstraints(lower, upper, currentPrefix) {
         const alphabet = Array.from({ length: 26 }, (_, index) => String.fromCharCode(65 + index));
+        const normalizedPrefix = currentPrefix.toLowerCase();
+        const fixedPrefix = [];
+
+        if (lower && upper) {
+            const lowerNormalized = lower.toLowerCase();
+            const upperNormalized = upper.toLowerCase();
+            const minLength = Math.min(lowerNormalized.length, upperNormalized.length);
+            let index = 0;
+
+            while (index < minLength && lowerNormalized[index] === upperNormalized[index]) {
+                fixedPrefix.push(lowerNormalized[index].toUpperCase());
+                index += 1;
+            }
+        }
+
+        if (this.commonWordsList.length > 0) {
+            const possibleSet = new Set();
+            const prefixLength = normalizedPrefix.length;
+            const lowerNormalized = lower ? lower.toLowerCase() : null;
+            const upperNormalized = upper ? upper.toLowerCase() : null;
+
+            for (const word of this.commonWordsList) {
+                if (lowerNormalized && this.compareWords(word, lowerNormalized) <= 0) continue;
+                if (upperNormalized && this.compareWords(word, upperNormalized) >= 0) continue;
+                if (!word.startsWith(normalizedPrefix)) continue;
+                if (word.length > prefixLength) {
+                    possibleSet.add(word[prefixLength].toUpperCase());
+                }
+            }
+
+            const possible = Array.from(possibleSet).sort();
+            if (possible.length > 0 || currentPrefix.length > 0) {
+                return { fixedPrefix, possible };
+            }
+        }
+
         if (!lower || !upper) {
-            return { prefix: [], possible: alphabet };
+            return { fixedPrefix, possible: alphabet };
         }
 
         const minLength = Math.min(lower.length, upper.length);
-        const prefix = [];
         let index = 0;
 
         while (index < minLength && lower[index] === upper[index]) {
-            prefix.push(lower[index]);
             index += 1;
         }
 
         if (index >= minLength) {
-            return { prefix, possible: alphabet };
+            return { fixedPrefix, possible: alphabet };
         }
 
         const start = lower.charCodeAt(index);
@@ -333,7 +428,7 @@ class BetweenleGame {
             possible.push(String.fromCharCode(code));
         }
 
-        return { prefix, possible };
+        return { fixedPrefix, possible };
     }
 
     formatDistancePercent(value) {

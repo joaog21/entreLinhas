@@ -254,21 +254,22 @@ header .subtitle {
 }
 
 .letter-fixed {
-    background: #e2e8f0;
-    color: #0f172a;
-    border-color: #94a3b8;
+    background: #dbeafe;
+    color: #1d4ed8;
+    border-color: #93c5fd;
 }
 
 .letter-possible {
-    background: #f1f5f9;
-    color: #334155;
-    border-color: #cbd5e1;
+    background: #dcfce7;
+    color: #166534;
+    border-color: #86efac;
 }
 
 .letter-excluded {
-    background: #f8fafc;
-    color: #94a3b8;
-    border-color: #e2e8f0;
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+    opacity: 0.85;
 }
 
 .alphabet-hint {
